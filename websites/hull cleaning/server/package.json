@@ -1,0 +1,25 @@
+{
+  "name": "ebfnb-gqlserver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "start": "NODE_ENV=${NODE_ENV:=development} babel-node lib",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/node": "^7.7.7",
+    "@babel/preset-env": "^7.7.7",
+    "apollo-server": "^2.3.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "graphql": "^14.0.2",
+    "graphql-tag": "^2.10.0",
+    "ramda": "^0.26.1",
+    "uuid": "^3.3.2"
+  }
+}

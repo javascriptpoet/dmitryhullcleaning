@@ -1,0 +1,22 @@
+{
+  "pricing": {
+    "path": "/pricing",
+    "component": "PricingPage",
+    "label": "Our Prices"
+  },
+  "requestService": {
+    "path": "/requestService",
+    "component": "RequestServicePage",
+    "label": "Request Service"
+  },
+  "contact": {
+    "path": "/contact",
+    "component": "contactPage",
+    "label": "Contact"
+  },
+  "about": {
+    "path": "/about",
+    "component": "AboutPage",
+    "label": "About"
+  }
+}
