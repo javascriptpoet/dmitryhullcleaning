@@ -1,7 +1,8 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core"
 import React, { useState } from "react"
-import LayoutContainer from "./LayoutContainer"
+import LayoutContainer from "../../LayoutContainer"
+import Header from "./Header"
 
 export const jsxFix = jsx
 
@@ -13,6 +14,7 @@ export const PageLayoutProvider = ({ children }) => {
 
   return (
     <PageLayoutContext.Provider value={pageLayout}>
+      <Header />
       <LayoutContainer
         tag="main"
         customCss={css`
