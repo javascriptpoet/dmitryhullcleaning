@@ -3,20 +3,19 @@ import GlobalStyles from "./GlobalStyles"
 import { ThemeProvider } from "./ThemeContext"
 import { ApolloClientProvider } from "./ApolloClientContext"
 import { CurrentUserProvider } from "./CurrentUserContext"
-import { PageLayoutProvider } from "./PageLayoutContext/components/PageLayoutContext"
+import PageLayout from "./PageLayout"
 import { Router } from "@reach/router"
 import LazyRoute from "./LazyRoute"
 import routes from "../routes"
-import NotFoundPage from "./NotFoundPage"
+import NotFoundPage from "../pages/NotFoundPage"
 
-Object.entries(routes).map((key, { path, component }) => console.log(path))
 const App = () => {
   return (
     <ApolloClientProvider>
       <ThemeProvider>
         <CurrentUserProvider>
           <GlobalStyles />
-          <PageLayoutProvider>
+          <PageLayout>
             <Router>
               <NotFoundPage default />
               <LazyRoute key="index" path="/" component="HomePage" />
@@ -24,7 +23,7 @@ const App = () => {
                 <LazyRoute key={key} path={path} component={component} />
               ))}
             </Router>
-          </PageLayoutProvider>
+          </PageLayout>
         </CurrentUserProvider>
       </ThemeProvider>
     </ApolloClientProvider>

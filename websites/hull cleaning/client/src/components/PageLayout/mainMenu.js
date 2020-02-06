@@ -5,11 +5,6 @@ const menuFromRout = ([label, routeName]) => ({
   path: routes[routeName].path
 })
 const mainMenu = [
-  ...[
-    ["Our Prices", "pricing"],
-    ["Contact", "contact"],
-    ["About", "about"]
-  ].map(menuFromRout),
   {
     label: "Request Service",
     subMenu: [
@@ -21,7 +16,12 @@ const mainMenu = [
         ["Other", "requestOther"]
       ].map(menuFromRout)
     ]
-  }
+  },
+  ...[
+    ["Our Prices", "pricing"],
+    ["Contact", "contact"],
+    ["About", "about"]
+  ].map(menuFromRout)
 ]
 
 export default mainMenu

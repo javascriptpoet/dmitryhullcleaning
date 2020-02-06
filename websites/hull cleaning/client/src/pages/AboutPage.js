@@ -1,6 +1,6 @@
 import React from "react"
-import Hero from "./Hero"
-import PageTitle from "./PageTitle"
+import Hero from "../components/Hero"
+import PageTitle from "../components/PageTitle"
 
 const AboutPage = () => (
   <React.Fragment>

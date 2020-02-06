@@ -1,14 +1,19 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core"
-import React, { useState } from "react"
+import React, { useState, useContext } from "react"
 import LayoutContainer from "../../LayoutContainer"
 import Header from "./Header"
 
 export const jsxFix = jsx
 
-export const PageLayoutContext = React.createContext()
+const PageLayoutContext = React.createContext()
+export const usePageLayout = () => {
+  const pageLayout = useContext(PageLayoutContext)
 
-export const PageLayoutProvider = ({ children }) => {
+  return pageLayout
+}
+
+const PageLayout = ({ children }) => {
   const [secondaryMenuItems, setSecondaryMenuItems] = useState([])
   const pageLayout = { setSecondaryMenuItems }
 
@@ -26,3 +31,4 @@ export const PageLayoutProvider = ({ children }) => {
     </PageLayoutContext.Provider>
   )
 }
+export default PageLayout

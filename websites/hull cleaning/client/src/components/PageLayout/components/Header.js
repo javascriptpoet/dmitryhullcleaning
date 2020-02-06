@@ -51,7 +51,6 @@ const Header = () => {
           />
           <Menu
             menu={mainMenu}
-            side="right"
             customCss={css`
               grid-area: menu;
             `}
