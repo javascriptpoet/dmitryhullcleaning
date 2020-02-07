@@ -53,6 +53,8 @@ const Header = () => {
             menu={mainMenu}
             customCss={css`
               grid-area: menu;
+              margin: 0;
+              padding: 0;
             `}
           />
         </LayoutContainer>

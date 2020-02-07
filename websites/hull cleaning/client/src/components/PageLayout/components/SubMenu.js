@@ -7,7 +7,7 @@ import React, { useState, useCallback, useEffect } from "react"
 
 export const jsxFix = jsx
 
-const SubMenu = ({ label, menu, customCss = css`` }) => {
+const SubMenu = ({ children, label, menu, customCss = css`` }) => {
   const { colors } = useTheme()
   const [isCurrent, setIsCurrent] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
@@ -93,7 +93,9 @@ const SubMenu = ({ label, menu, customCss = css`` }) => {
             z-index: 1;
             visibility: ${isOpen ? "visible" : "hidden"};
           `}
-        />
+        >
+          {children}
+        </Menu>
       </div>
     </li>
   )

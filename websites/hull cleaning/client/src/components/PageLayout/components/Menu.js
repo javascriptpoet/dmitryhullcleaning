@@ -15,6 +15,7 @@ const MenuContext = React.createContext()
 export const useMenu = () => useContext(MenuContext)
 
 const Menu = ({
+  children,
   menu,
   onCurrentChange = () => {},
   isVertical = false,
@@ -22,16 +23,17 @@ const Menu = ({
 }) => {
   const { colors } = useTheme()
   const [isCurrent, setIsCurrent] = useState(false)
-  const children = {}
+  const childrenStatus = {}
 
   const menuContext = {
-    createChild: label => (children[label] = { isCurrent: null }),
-    destroyChild: label => delete children[label],
+    createChild: label => (childrenStatus[label] = { isCurrent: null }),
+    destroyChild: label => delete childrenStatus[label],
     updateChild: (label, isChildCurrent) => {
-      children[label].isCurrent = isChildCurrent
+      childrenStatus[label].isCurrent = isChildCurrent
       let newIsCurrent = false
-      Object.entries(children).find(([label, { isCurrent }]) => isCurrent) &&
-        (newIsCurrent = true)
+      Object.entries(childrenStatus).find(
+        ([label, { isCurrent }]) => isCurrent
+      ) && (newIsCurrent = true)
       setIsCurrent(isCurrent => {
         isCurrent !== newIsCurrent && onCurrentChange(newIsCurrent)
         return newIsCurrent
@@ -46,34 +48,34 @@ const Menu = ({
         customCss,
         css`
           display: grid;
-          margin: 0;
-          padding: 0;
           list-style: none;
           text-align: center;
         `
       ]}
     >
       <MenuContext.Provider value={menuContext}>
-        {menu.map(({ path, label, subMenu }, index) => {
-          const itemCustomCss = css`
+        {children
+          ? children
+          : menu.map(({ path, label, subMenu }, index) => {
+              const itemCustomCss = css`
               grid-${isVertical ? "row" : "column"}-start: ${index + 1};
             `
-          return subMenu ? (
-            <SubMenu
-              label={label}
-              key={label}
-              menu={subMenu}
-              customCss={itemCustomCss}
-            />
-          ) : (
-            <MenuLink
-              to={path}
-              label={label}
-              key={label}
-              customCss={itemCustomCss}
-            />
-          )
-        })}
+              return subMenu ? (
+                <SubMenu
+                  label={label}
+                  key={label}
+                  menu={subMenu}
+                  customCss={itemCustomCss}
+                />
+              ) : (
+                <MenuLink
+                  to={path}
+                  label={label}
+                  key={label}
+                  customCss={itemCustomCss}
+                />
+              )
+            })}
       </MenuContext.Provider>
     </ul>
   )
