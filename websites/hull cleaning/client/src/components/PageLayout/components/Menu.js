@@ -50,6 +50,7 @@ const Menu = ({
           display: grid;
           list-style: none;
           text-align: center;
+          margin: 0;
         `
       ]}
     >
@@ -57,22 +58,23 @@ const Menu = ({
         {children
           ? children
           : menu.map(({ path, label, subMenu }, index) => {
-              const itemCustomCss = css`
-              grid-${isVertical ? "row" : "column"}-start: ${index + 1};
-            `
               return subMenu ? (
                 <SubMenu
                   label={label}
                   key={label}
                   menu={subMenu}
-                  customCss={itemCustomCss}
+                  customCss={css`
+                    grid-row-start: ${index + 1};
+                  `}
                 />
               ) : (
                 <MenuLink
                   to={path}
                   label={label}
                   key={label}
-                  customCss={itemCustomCss}
+                  customCss={css`
+                    grid-${isVertical ? "row" : "column"}-start: ${index + 1};
+                  `}
                 />
               )
             })}

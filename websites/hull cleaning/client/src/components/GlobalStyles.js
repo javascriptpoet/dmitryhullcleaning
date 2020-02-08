@@ -1,6 +1,6 @@
 /** @jsx jsx */
-import { css, Global, jsx } from '@emotion/core'
-import useTheme from '../hooks/useTheme'
+import { css, Global, jsx } from "@emotion/core"
+import useTheme from "../hooks/useTheme"
 
 export const jsxFix = jsx
 
@@ -30,7 +30,7 @@ const GlobalStyles = () => {
 
         body {
           font-family: ${font.family.default};
-          overflow-y: scroll;
+          margin: 0;
         }
 
         h1,

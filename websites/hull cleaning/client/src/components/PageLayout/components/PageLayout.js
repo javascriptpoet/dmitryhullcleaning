@@ -1,38 +1,46 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core"
-import React, { useState, useContext } from "react"
+import React, { useState } from "react"
 import LayoutContainer from "../../LayoutContainer"
 import Header from "./Header"
-import SideMenu from "./SideMenu"
+import Sidebar from "./Sidebar"
 import mainMenu from "../mainMenu"
 
 export const jsxFix = jsx
 
-const PageLayoutContext = React.createContext()
-export const usePageLayout = () => {
-  const pageLayout = useContext(PageLayoutContext)
-
-  return pageLayout
-}
-
 const PageLayout = ({ children }) => {
-  const [secondaryMenuItems, setSecondaryMenuItems] = useState([])
-  const pageLayout = { setSecondaryMenuItems }
-
   return (
-    <PageLayoutContext.Provider value={pageLayout}>
-      <Header />
-
-      <LayoutContainer
-        tag="main"
+    <LayoutContainer
+      customCss={css`
+        display: grid;
+        max-height: 100vh;
+        grid-template-rows: 60px 1fr;
+        grid-template-columns: 100px 1fr;
+        grid-template-areas:
+          "header header"
+          "sidebar content";
+      `}
+    >
+      <Header
         customCss={css`
-          padding: calc(60px + 0.5rem) 60px 2.5rem;
+          grid-area: header;
+        `}
+      />
+
+      <Sidebar
+        css={css`
+          grid-area: sidebar;
+        `}
+      />
+      <div
+        css={css`
+          overflow: auto;
+          grid-area: content;
         `}
       >
-        <SideMenu menu={mainMenu} />
         {children}
-      </LayoutContainer>
-    </PageLayoutContext.Provider>
+      </div>
+    </LayoutContainer>
   )
 }
 export default PageLayout

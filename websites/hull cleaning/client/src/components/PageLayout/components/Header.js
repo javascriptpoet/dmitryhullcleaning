@@ -1,65 +1,52 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core"
 import { Link } from "@reach/router"
-import { Fragment } from "react"
 import LayoutContainer from "../../LayoutContainer"
 import useScreenSize from "../../../hooks/useScreenSize"
 import useTheme from "../../../hooks/useTheme"
 import mainMenu from "../mainMenu"
 import Logo from "./Logo"
 import Menu from "./Menu"
+import logo from "../../../assets/croppedshoe.png"
 
 export const jsxFix = jsx
 
-const Header = () => {
+const Header = ({ customCss }) => {
   const { font, utils } = useTheme()
   return (
-    <Fragment>
-      <header
-        css={css`
+    <header
+      css={[
+        customCss,
+        css`
           font-family: ${font.family.heading};
           background-color: #fff;
           border-bottom: 1px solid #000;
           box-shadow: 0px 0px 8px 0px ${utils.toRgb(0, 0, 0, 0.5)};
-          height: 60px;
-          left: 0;
-          position: fixed;
-          right: 0;
-          top: 0;
+        `
+      ]}
+    >
+      <nav
+        css={css`
+          display: grid;
+          grid-column-gap: 10px;
+          grid-template-areas: "logo menu toggle";
+          grid-template-columns: 60px 1fr 60px;
+          grid-template-rows: 60px;
         `}
       >
-        <LayoutContainer
-          tag="nav"
+        <Logo
           customCss={css`
-            bottom: 0;
-            display: grid;
-            grid-column-gap: 10px;
-            grid-template-areas: "logo menu toggle";
-            grid-template-columns: 60px 1fr 60px;
-            grid-template-rows: 60px;
-            left: 0;
-            place-items: top / right;
-            position: absolute;
-            right: 0;
-            top: 0;
+            grid-area: logo;
           `}
-        >
-          <Logo
-            customCss={css`
-              grid-area: logo;
-            `}
-          />
-          <Menu
-            menu={mainMenu}
-            customCss={css`
-              grid-area: menu;
-              margin: 0;
-              padding: 0;
-            `}
-          />
-        </LayoutContainer>
-      </header>
-    </Fragment>
+        />
+        <Menu
+          menu={mainMenu}
+          customCss={css`
+            grid-area: menu;
+          `}
+        />
+      </nav>
+    </header>
   )
 }
 
