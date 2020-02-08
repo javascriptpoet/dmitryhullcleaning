@@ -2,7 +2,7 @@
 import { css, jsx } from "@emotion/core"
 import React, { useState } from "react"
 import LayoutContainer from "../../LayoutContainer"
-import Header from "./Header"
+import Header from "./Header.bulma"
 import Sidebar from "./Sidebar"
 import mainMenu from "../mainMenu"
 
