@@ -33,24 +33,14 @@ const SubMenu = ({ children, label, menu, customCss = css`` }) => {
   })
 
   return (
-    <li
-      css={[
-        customCss,
-        css`
-          width: 100%;
-          margin: 0;
-          padding: 0;
-        `
-      ]}
-      key={label}
-    >
+    <li css={[customCss]} key={label}>
       <div
         css={[
           css`
             display: block;
             text-decoration: none;
             line-height: 70px;
-            height: 60px;
+            height: auto;
             color: #000;
             font-size: 20px;
             border-bottom: 8px solid transparent;

@@ -18,6 +18,9 @@ const Header = ({ customCss }) => {
       css={[
         customCss,
         css`
+          position:fixed
+          left:0
+          top:0
           font-family: ${font.family.heading};
           background-color: #fff;
           border-bottom: 1px solid #000;

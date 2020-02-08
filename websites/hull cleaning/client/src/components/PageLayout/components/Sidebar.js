@@ -14,6 +14,8 @@ const Sidebar = ({ customCss }) => {
       css={[
         customCss,
         css`
+          width: fit-content;
+          padding-right: 20px;
           font-family: ${font.family.heading};
           background-color: #fff;
           border-right: 1px solid #000;

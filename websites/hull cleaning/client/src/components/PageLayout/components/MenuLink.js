@@ -22,7 +22,7 @@ const MenuLink = ({ to, label, customCss = css`` }) => {
       css={[
         customCss,
         css`
-          width: 100%;
+          width: auto;
           margin: 0;
           padding: 0;
         `

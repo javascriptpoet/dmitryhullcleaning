@@ -1,15 +1,16 @@
 import React from "react"
 import Hero from "../components/Hero"
 import PageTitle from "../components/PageTitle"
+import PageLayout from "../components/PageLayout"
 
 const AboutPage = () => (
-  <React.Fragment>
+  <PageLayout>
     <Hero />
     <PageTitle>About</PageTitle>
     <div>
       <p>Add page content.</p>
     </div>
-  </React.Fragment>
+  </PageLayout>
 )
 
 export default AboutPage

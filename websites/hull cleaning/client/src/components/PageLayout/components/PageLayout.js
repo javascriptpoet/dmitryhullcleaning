@@ -10,35 +10,29 @@ export const jsxFix = jsx
 
 const PageLayout = ({ children }) => {
   return (
-    <LayoutContainer
-      customCss={css`
-        display: grid;
-        max-height: 100vh;
-        grid-template-rows: 60px 1fr;
-        grid-template-columns: 100px 1fr;
-        grid-template-areas:
-          "header header"
-          "sidebar content";
-      `}
-    >
-      <Header
-        customCss={css`
-          grid-area: header;
-        `}
-      />
-
-      <Sidebar
-        css={css`
-          grid-area: sidebar;
-        `}
-      />
+    <LayoutContainer customCss={css``}>
+      <Header />
       <div
         css={css`
-          overflow: auto;
-          grid-area: content;
+          display: grid;
+          grid-column-gap: 10px;
+          grid-template-areas: "sidebar content";
+          grid-template-columns: auto 1fr;
+          grid-template-rows: auto;
         `}
       >
-        {children}
+        <Sidebar
+          customCss={css`
+            grid-area: sidebar;
+          `}
+        />
+        <div
+          css={css`
+            grid-area: content;
+          `}
+        >
+          {children}
+        </div>
       </div>
     </LayoutContainer>
   )
