@@ -4,10 +4,11 @@ import { ThemeProvider } from "./ThemeContext"
 import { ApolloClientProvider } from "./ApolloClientContext"
 import { CurrentUserProvider } from "./CurrentUserContext"
 import { Router } from "@reach/router"
-import LazyRoute from "./LazyRoute"
+import SecureRoute from "./SecureRoute"
 import routes from "../routes"
 import NotFoundPage from "../pages/NotFoundPage"
 import "bulma/bulma.sass"
+import "react-bulma-components/dist/react-bulma-components.min.css"
 
 const App = () => {
   return (
@@ -17,9 +18,8 @@ const App = () => {
           <GlobalStyles />
           <Router>
             <NotFoundPage default />
-            <LazyRoute key="index" path="/" component="HomePage" />
-            {Object.entries(routes).map(([key, { path, component }]) => (
-              <LazyRoute key={key} path={path} component={component} />
+            {Object.entries(routes).map(([key, {path,...restRoute}]) => (
+              <SecureRoute key={key} path={path} route={{path,...restRoute}} />
             ))}
           </Router>
         </CurrentUserProvider>

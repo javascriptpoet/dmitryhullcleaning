@@ -1,4 +1,8 @@
+/** @jsx jsx */
+import { css, jsx } from "@emotion/core"
 import React from "react"
+
+export const jsxFix = jsx
 
 const sansSerifFamily = `'Open Sans', sans-serif`
 const serifFamily = "Merriweather, serif"
@@ -26,7 +30,14 @@ const theme = {
   utils: {
     toRgb: (r, g, b, a = 0) => `rgba(${r}, ${g}, ${b}, ${a})`
   },
-  viewportWidthBreakpoint: 600
+  viewportWidthBreakpoint: 600,
+  css: {
+    layoutContainer: css`
+      max-width: 60rem;
+      margin-left: auto;
+      margin-right: auto;
+    `
+  }
 }
 
 const ThemeContext = React.createContext(theme)

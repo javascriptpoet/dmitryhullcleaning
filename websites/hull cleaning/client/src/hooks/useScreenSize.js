@@ -5,7 +5,6 @@ import useTheme from "./useTheme"
 const useScreenSize = () => {
   const theme = useTheme()
   const getScreenSize = () => {
-    // console.log(verge.viewportW())
     return verge.viewportW() > theme.viewportWidthBreakpoint ? "large" : "small"
   }
   const [screenSize, setScreenSize] = useState(getScreenSize())

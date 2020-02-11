@@ -24,10 +24,8 @@ const SubMenu = ({ children, label, menu, customCss = css`` }) => {
 
   useEffect(() => {
     const listener = () => {
-      console.log("listener", isOpen)
       if (isOpen) setIsOpen(false)
     }
-    console.log("listener")
     window.onclick = listener
     //   return () => window.removeEventListener("onclick", listener)
   })

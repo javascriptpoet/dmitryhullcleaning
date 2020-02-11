@@ -13,7 +13,7 @@ export const ApolloClientContext = React.createContext(client)
 
 export const ApolloClientProvider = ({ children }) => {
   return (
-    <ApolloClientContext.Provider>
+    <ApolloClientContext.Provider value={client}>
       <ApolloProvider client={client}>{children}</ApolloProvider>
     </ApolloClientContext.Provider>
   )

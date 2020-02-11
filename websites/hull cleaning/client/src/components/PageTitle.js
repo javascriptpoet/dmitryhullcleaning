@@ -1,24 +1,32 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core"
 import { useEffect } from "react"
+import { Heading } from "react-bulma-components"
+import routes from "../routes"
 
 export const jsxFix = jsx
 
-const PageTitle = ({ children, documentTitle = children.toString() }) => {
+const PageTitle = () => {
+  const pagePath = window.location.href.split(window.location.host)[1]
+  const pageRouteEntry = Object.entries(routes).find(
+    ([routeName, { path }]) => path === pagePath
+  )
+  if (!pageRouteEntry)
+    throw new Error(
+      `route record at location ${window.location.href} not found`
+    ).title
+
+  const [routeName, { title }] = pageRouteEntry
   useEffect(() => {
     if (document) {
-      document.title = `${documentTitle} | Dmitry Hull Cleaning`
+      document.title = `${title} | Dmitry Hull Cleaning`
     }
-  }, [documentTitle])
+  })
+
   return (
-    <h1
-      css={css`
-        font-size: 2.5rem;
-        font-weight: 400;
-      `}
-    >
-      {children}
-    </h1>
+    <div>
+      <h1>{title}</h1>
+    </div>
   )
 }
 

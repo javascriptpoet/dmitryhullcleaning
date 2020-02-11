@@ -1,4 +1,9 @@
 export default {
+  home: {
+    title: "Home",
+    path: "/",
+    component: "HomePage"
+  },
   pricing: {
     title: "Our Prices",
     path: "/pricing",
@@ -38,5 +43,21 @@ export default {
     title: "About",
     path: "/about",
     component: "AboutPage"
+  },
+  login: {
+    title: "Login",
+    path: "/login",
+    component: "LoginPage"
+  },
+  signup: {
+    title: "Sign Up",
+    path: "/signup",
+    component: "SignupPage"
+  },
+  adminDashboard: {
+    title: "Admin Dashboard",
+    path: "/adminDashboard",
+    component: "AdminDashboardPage",
+    scopes: ["admin"]
   }
 }

@@ -1,9 +1,9 @@
 import routes from "../../routes"
 
-const menuFromRout = ([label, routeName]) => ({
-  label,
-  path: routes[routeName].path
-})
+const menuFromRout = ([label, routeName]) => {
+  const { path, scopes } = routes[routeName]
+  return { path, scopes, label }
+}
 const mainMenu = [
   {
     label: "Request Service",
@@ -20,7 +20,8 @@ const mainMenu = [
   ...[
     ["Our Prices", "pricing"],
     ["Contact", "contact"],
-    ["About", "about"]
+    ["About", "about"],
+    ["Admin", "adminDashboard"]
   ].map(menuFromRout)
 ]
 
