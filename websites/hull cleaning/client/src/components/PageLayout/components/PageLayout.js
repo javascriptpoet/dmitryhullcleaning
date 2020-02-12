@@ -16,21 +16,26 @@ const PageLayout = ({ children }) => {
       <div
         css={css`
           padding-top: 71px;
-          display: grid;
-          grid-column-gap: 10px;
-          grid-template-areas: "sidebar content";
-          grid-template-columns: auto 1fr;
-          grid-template-rows: auto;
+          display: flex;
+          flex-direction: row;
+          overflow: hidden;
         `}
       >
-        <Sidebar
-          customCss={css`
-            grid-area: sidebar;
+        <span
+          class="icon"
+          css={css`
+            top: 50vh;
+            left: 0;
+            z-index: 10000;
+            position: fixed;
           `}
-        />
+        >
+          <i class="fas fa-bars"></i>
+        </span>
+        <Sidebar customCss={css``}>lasdjclsj</Sidebar>
         <div
           css={css`
-            grid-area: content;
+            flex: 1;
           `}
         >
           <PageTitle />

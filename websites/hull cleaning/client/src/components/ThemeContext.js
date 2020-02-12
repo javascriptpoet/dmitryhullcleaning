@@ -30,7 +30,7 @@ const theme = {
   utils: {
     toRgb: (r, g, b, a = 0) => `rgba(${r}, ${g}, ${b}, ${a})`
   },
-  viewportWidthBreakpoint: 600,
+  viewportWidthBreakpoint: 768,
   css: {
     layoutContainer: css`
       max-width: 60rem;
