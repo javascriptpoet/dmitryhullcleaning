@@ -16,7 +16,8 @@ const PageLayout = ({ children }) => {
       <div
         css={css`
           padding-top: 71px;
-          display: flex;
+          display: grid;
+
           flex-direction: row;
           overflow: hidden;
         `}

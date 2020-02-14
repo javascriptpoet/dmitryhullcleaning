@@ -42,7 +42,7 @@ const MenuFromArray = ({ arr: menu }) => {
 const AccountLnks = () => {
   const { isLoggedin, logout } = useCurrentUser()
   const whenLoggedout = (
-    <div class="field has-addons navbar-item">
+    <div className="field has-addons navbar-item">
       <p className="control ">
         <Link to={routes.login.path} className="button is-primary ">
           Log In
