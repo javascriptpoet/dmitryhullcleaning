@@ -18,8 +18,12 @@ const App = () => {
           <GlobalStyles />
           <Router>
             <NotFoundPage default />
-            {Object.entries(routes).map(([key, {path,...restRoute}]) => (
-              <SecureRoute key={key} path={path} route={{path,...restRoute}} />
+            {Object.entries(routes).map(([key, { path, ...restRoute }]) => (
+              <SecureRoute
+                key={key}
+                path={path}
+                route={{ path, ...restRoute }}
+              />
             ))}
           </Router>
         </CurrentUserProvider>

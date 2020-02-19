@@ -74,7 +74,11 @@ const AccountLnks = () => {
 const Header = () => {
   const theme = useTheme()
   return (
-    <Navbar css={theme.css.layoutContainer}>
+    <Navbar
+      css={css`
+        grid-area: header;
+      `}
+    >
       <Navbar.Brand>
         <Navbar.Item renderAs={Link} to={"/"}>
           <img src={logo} alt="Dmitry Hull Cleaning" width={60} height={60} />
