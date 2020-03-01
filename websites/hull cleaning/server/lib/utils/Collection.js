@@ -1,19 +1,37 @@
 import { EventEmitter, captureRejectionSymbol } from "events"
+import { AuthenticationError } from "apollo-server"
+import { all } from "ramda"
 
 const Collection = class Collection extends EventEmitter {
-  constructor({ name }) {
+  constructor({ name, currentUser = { scopes: [] } }) {
     const collection = super({ captureRejections: true })
     collection.name = name
+    this.currentUser = currentUser
   }
-  writeOne(record) {
-    this.emit("Added", record)
+
+  _createRecord(record) {
+    return {
+      ...record,
+      id: UUID(),
+      dateCreated: Date(),
+      ownerId: this.currentUser ? currentUser.id : undefined
+    }
   }
-  readOne(id) {
-    this.emit("Read", id)
+
+  _handlePermissions(opName) {
+    const opScope = `${this.name}.${opName}`
+    if (!this.currentUser.scopes.includes(opScope))
+      throw new AuthenticationError(`${opScope}: operation not authorized`)
   }
-  update(id, updater) {
-    this.emit("Updated", id, updater)
+
+  async _publicMethod(methodName, ...methodArgs) {
+    this._handlePermissions(methodName)
+    this.emit(`before ${methodName}`, ...methodArgs)
+    const methodRes = await this[`_${methodName}`](...methodArgs)
+    this.emit(`after ${methodName}`, methodRes, ...methodArgs)
+    return methodRes
   }
+
   [captureRejectionSymbol](err, event, ...args) {
     console.log(
       `Collection ${this.name}: event ${event}: err=${err}: args=${args}`
@@ -21,3 +39,5 @@ const Collection = class Collection extends EventEmitter {
     this.destroy(err)
   }
 }
+
+export default Collection

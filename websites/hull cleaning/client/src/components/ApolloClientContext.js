@@ -1,9 +1,9 @@
 import React from "react"
-import { ApolloProvider } from "@apollo/client"
-import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client"
+import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client"
+import { createHttpLink } from "apollo-link-http"
 
 const httpLink = createHttpLink({
-  uri: "/graphql"
+  uri: "http://localhost:3000/graphql"
 })
 
 const client = new ApolloClient({

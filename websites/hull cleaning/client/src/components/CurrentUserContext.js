@@ -1,59 +1,80 @@
-import React, { useState } from "react"
-import useLocalStorage from "../hooks/useLocalStorage"
 import useApolloClient from "../hooks/useApolloClient"
 import intersection from "../utils/array/intersection"
+import { useQuery } from "@apollo/client"
+import gql from "graphql-tag"
+import React from "react"
 
-const initialContext = {
-  login: (email, password) => false,
-  logout: () => false
-}
+const CURRENT_USER = gql`
+  query CurrentUser {
+    currentUser {
+      createDate
+      comments
+      fullname
+      username
+      email
+      phone
+      commMethod
+      roles
+      allowedScopes
+      disallowedScopes
+      scopes
+    }
+  }
+`
 
-export const CurrentUserContext = React.createContext(initialContext)
+const domain =
+  process.env.NODE_ENV === "production" ? "" : "http://localhost:3000"
+
+const url = path => new URL(path, domain)
+
+export const CurrentUserContext = React.createContext()
 
 export const CurrentUserProvider = ({ children }) => {
   const apolloClient = useApolloClient()
-  const [user, setUser] = useState({
-    scopes: [],
-    isLoggedin: false
-  })
+  const { loading, error, data, refetch } = useQuery(CURRENT_USER)
 
-  const currentUser = {
-    ...user,
-    isAllowed: requiredScopes => {
-      return (
-        intersection(requiredScopes, user.scopes).length ===
-        requiredScopes.length
-      )
-    },
-    login: (username, password) => {
-      if (username === "skihappy" && password === "12Powder") {
-        setUser({
-          isLoggedin: true,
-          scopes: ["admin"],
-          firstName: "Dmitry",
-          lastName: "Shust"
-        })
-      } else {
-        setUser({
-          isLoggedin: true,
-          scopes: [],
-          firstName: "Joe",
-          lastName: "Doe"
-        })
-      }
-      alert(user.firstName, user.lastName)
-      return true
-    },
-    logout: () => {
-      setUser({ scopes: [], isLoggedin: false })
+  const currentUser = loading || error ? {} : data.currentUser
+
+  const login = async (username, password) => {
+    const loginFormData = new FormData()
+    loginFormData.append("username", username)
+    loginFormData.append("password", password)
+    const response = await fetch(url("/api/login"), {
+      method: "POST",
+      body: new FormData(loginFormData)
+    })
+    if (response.statusText === "OK") {
       apolloClient.resetStore()
-
-      return true
+      refetch()
     }
   }
 
+  const logout = async () => {
+    const response = await fetch(url("/api/logout"), {
+      method: "POST"
+    })
+    if (response.statusText === "OK") {
+      apolloClient.resetStore()
+      refetch()
+    }
+  }
+
+  const isAllowed = requiredScopes => {
+    return (
+      intersection(requiredScopes, currentUser.scopes).length ===
+      requiredScopes.length
+    )
+  }
+
+  const currentUserController = {
+    currentUser,
+    isAllowed,
+    login,
+    logout
+  }
+
   return (
-    <CurrentUserContext.Provider value={currentUser}>
+    <CurrentUserContext.Provider value={currentUserController}>
       {children}
     </CurrentUserContext.Provider>
   )
