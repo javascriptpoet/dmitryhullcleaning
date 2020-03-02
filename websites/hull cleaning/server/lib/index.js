@@ -14,7 +14,7 @@ import cookieParser from "cookie-parser"
 import bodyParser from "body-parser"
 import Ramda from "ramda"
 import { ApolloError } from "apollo-server"
-import permissionsControllerFactory from "./modules/permissions/controller"
+import permissionsController from "./modules/permissions/controller"
 import flash from "connect-flash"
 
 const controllers = {
