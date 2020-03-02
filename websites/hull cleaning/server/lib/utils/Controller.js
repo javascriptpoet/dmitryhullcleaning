@@ -2,7 +2,7 @@ import { EventEmitter, captureRejectionSymbol } from "events"
 import { AuthenticationError } from "apollo-server"
 import { all } from "ramda"
 
-const Collection = class Collection extends EventEmitter {
+const Controller = class Collection extends EventEmitter {
   constructor({ name, currentUser = { scopes: [] } }) {
     const collection = super({ captureRejections: true })
     collection.name = name
@@ -34,10 +34,10 @@ const Collection = class Collection extends EventEmitter {
 
   [captureRejectionSymbol](err, event, ...args) {
     console.log(
-      `Collection ${this.name}: event ${event}: err=${err}: args=${args}`
+      `Controller ${this.name}: event ${event}: err=${err}: args=${args}`
     )
     this.destroy(err)
   }
 }
 
-export default Collection
+export default Controller
