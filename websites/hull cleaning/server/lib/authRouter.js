@@ -1,7 +1,6 @@
 const router = require("express").Router()
-import getToken from "./getToken"
+import getAuthToken from "./utils/getAuthToken"
 import usersController from "./modules/users/controller"
-import { nonExecutableDefinitionMessage } from "graphql/validation/rules/ExecutableDefinitions"
 import { ApolloError } from "apollo-server"
 
 const domain =
@@ -20,7 +19,7 @@ const authRouter = passport => {
         return res.redirect(url("/login"))
       }
       req.flash("success", `logged in as ${user.username}`)
-      res.cookie("jwt", `${getToken(req.user.id)}`, {
+      res.cookie("jwt", `${getAuthToken(req.user.id)}`, {
         maxAge: 24 * 60 * 60,
         httpOnly: true
       })

@@ -7,9 +7,8 @@ const typeDefs = gql`
     email: String
     phone: String
     commMethod: CommMethod
-    roles: [String]
-    exceptionScopes: ExceptionScopes
-    scopes: [String]
+    allowed: [String]
+    disallowed: [String]
   }
 
   type UserProfile implements UserProfile {
@@ -18,9 +17,8 @@ const typeDefs = gql`
     email: String
     phone: String
     commMethod: CommMethod
-    roles: [String]
-    exceptionScopes: ExceptionScopes
-    scopes: [String]
+    allowed: [String]
+    disallowed: [String]
   }
 
   type User implements UserProfile {
@@ -34,10 +32,8 @@ const typeDefs = gql`
     email: String
     phone: String
     commMethod: CommMethod
-    roles: [String]
-    allowedScopes: [String]
-    disallowedScopes: [String]
-    scopes: [String]
+    allowed: [String]
+    disallowed: [String]
   }
 
   type CurrentUser implements UserProfile {
@@ -48,10 +44,9 @@ const typeDefs = gql`
     email: String
     phone: String
     commMethod: CommMethod
-    roles: [String]
-    allowedScopes: [String]
-    disallowedScopes: [String]
-    scopes: [String]
+    allowed: [String]
+    disallowed: [String]
+    scopes:[String]
   }
 
   input AddUser {
@@ -61,9 +56,8 @@ const typeDefs = gql`
     email: String
     phone: String
     commMethod: String
-    roles: [String]
-    allowedScopes: [String]
-    disallowedScopes: [String]
+    allowed: [String]
+    disallowed: [String]
   }
 
   extend type Mutation {
@@ -78,4 +72,4 @@ const typeDefs = gql`
   }
 `
 
-export default typeDefs
+export default [typeDefs]

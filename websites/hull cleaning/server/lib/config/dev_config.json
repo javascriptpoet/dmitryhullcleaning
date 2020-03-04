@@ -1,0 +1,8 @@
+{
+  "server":{
+    "priveledgedUser":{
+      "username":"admin",
+      "password":"admin"
+    }
+  }
+}
