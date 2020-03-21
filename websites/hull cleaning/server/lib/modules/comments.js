@@ -19,9 +19,14 @@ const typeDefs = gql`
   }
 
   extend type Query {
-    commentsOfComment(id: ID): [Comments]
+    commentsOfComment(id: ID): [Comment]
   }
 `
 const resolvers = {}
 
-export default { typeDefs, resolvers }
+module.exports = {
+  typeDefs,
+  resolvers,
+  permissions: { scopes: [], scopeSpaces: [] },
+  controller: () => {}
+}

@@ -19,3 +19,5 @@ const scopeSpaces = {
     "deleteScope"
   ]
 }
+
+export default { scopes, scopeSpaces }

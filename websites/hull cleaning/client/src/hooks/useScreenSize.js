@@ -1,9 +1,10 @@
 import verge from "verge"
 import { useEffect, useState } from "react"
-import useTheme from "./useTheme"
+import { ThemeContext } from "../components/AppProvider"
+import { useContext } from "react"
 
 const useScreenSize = () => {
-  const theme = useTheme()
+  const theme = useContext(ThemeContext)
   const getScreenSize = () => {
     return verge.viewportW() > theme.viewportWidthBreakpoint ? "large" : "small"
   }

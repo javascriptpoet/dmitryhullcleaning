@@ -1,14 +1,13 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core"
 import { Link } from "@reach/router"
-import useTheme from "../../../hooks/useTheme"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import { useMenu } from "./Menu"
-
+import { ThemeContext } from "../../AppProvider"
 export const jsxFix = jsx
 
 const MenuLink = ({ to, label, customCss = css`` }) => {
-  const { colors } = useTheme()
+  const { colors } = useContext(ThemeContext)
   const [isCurrent, setIsCurrent] = useState(false)
   const parentMenuContext = useMenu()
   useEffect(() => {

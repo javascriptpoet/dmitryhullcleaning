@@ -1,7 +1,8 @@
 import jwt from "jsonwebtoken"
+import config from "getconfig"
 
-const getAuthToken = userId => {
-  const token = jwt.sign({ userId }, process.env.JWT_SECRET)
+const getAuthToken = payload => {
+  const token = jwt.sign(payload, config.server.jwtSecret)
 
   return token
 }

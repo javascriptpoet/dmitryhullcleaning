@@ -1,6 +1,5 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core"
-import useTheme from "../../../hooks/useTheme"
 import React, { useState, useRef } from "react"
 import useScreenSize from "../../../hooks/useScreenSize"
 import ModalOverlay from "../../ModalOverlay"

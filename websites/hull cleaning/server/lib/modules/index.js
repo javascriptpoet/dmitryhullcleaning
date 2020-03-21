@@ -1,48 +1,51 @@
 import R from "ramda"
 
-const moduleList = ["users", "permissions"]
-
-const moduleExport = (exportName, moduleName) => {
-  const moduleExport = require(`./${moduleName}/${exportName}`)
-  return moduleExport
-}
+const moduleList = ["users", "permissions", "comments"]
 
 const addModule = (acc, moduleName) => {
-  const moduleResolvers = moduleExport("resolvers", moduleName)
-  const moduleTypeDefs = moduleExport("typeDefs", moduleName)
+  const nameSpacedPermission = permission => `${moduleName}.${permission}`
+
+  const nameSpacedPermissions = permissions =>
+    permissions.map(nameSpacedPermission)
+
+  const addNameSpacedScopeSpace = (acc, [name, permissions]) => ({
+    [nameSpacedPermission(name)]: nameSpacedPermissions(permissions)
+  })
+
+  const nameSpacedScopeSpaces = scopeSpaces =>
+    Object.entries(scopeSpaces).reduce(addNameSpacedScopeSpace, {})
 
   const {
-    scopes: moduleScopes = [],
-    scopeSpaces: moduleScopeSpaces = []
-  } = moduleExport("permissions", moduleName)
+    typeDefs,
+    resolvers,
+    permissions: { scopes = [], scopeSpaces = [] },
+    controller
+  } = require(`./${moduleName}`)
 
   return {
     resolvers: {
-      query: { ...acc.resolvers.query, ...moduleResolvers.query },
-      mutation: { ...acc.resolvers.mutation, ...moduleResolvers.mutation }
+      Query: { ...acc.resolvers.Query, ...resolvers.Query },
+      Mutation: { ...acc.resolvers.Mutation, ...resolvers.Mutation }
     },
-    typeDefs: [...acc.typeDefs, ...moduleTypeDefs],
+    typeDefs: [...acc.typeDefs, typeDefs],
     permissions: {
-      scopes: [...acc.permissions.scopes, ...moduleScopes],
+      scopes: [...acc.permissions.scopes, ...nameSpacedPermissions(scopes)],
       scopeSpaces: {
         ...acc.permissions.scopeSpaces,
-        ...moduleScopes
+        ...nameSpacedScopeSpaces(scopeSpaces)
       }
     },
     controllers: {
       ...acc.controllers,
-      [moduleName]: moduleExport("controller", moduleName)
+      [moduleName]: controller
     }
   }
 }
 
-export default R.reduce(
-  addModule,
-  {
-    resolvers: { query: {}, mutation: {} },
-    typeDefs: [],
-    permissions: { scopes: [], scopeSpaces: {} },
-    controllers: {}
-  },
-  moduleList
-)
+const modules = moduleList.reduce(addModule, {
+  resolvers: { Query: {}, Mutation: {} },
+  typeDefs: [],
+  permissions: { scopes: [], scopeSpaces: {} },
+  controllers: {}
+})
+export default modules

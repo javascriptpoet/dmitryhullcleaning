@@ -1,0 +1,9 @@
+{
+  "server": {
+    "jwtSecret": "secret",
+    "priveledgedUser": {
+      "username": "admin@admin.com",
+      "password": "admin"
+    }
+  }
+}

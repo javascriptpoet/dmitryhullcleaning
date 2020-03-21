@@ -1,12 +1,18 @@
 import { EventEmitter, captureRejectionSymbol } from "events"
-import { AuthenticationError } from "apollo-server"
+import { AuthenticationError, ApolloError } from "apollo-server-express"
 import { all } from "ramda"
+import UUID from "uuid"
+import getController from "../utils/getController"
 
-const Controller = class Collection extends EventEmitter {
-  constructor({ name, currentUser = { scopes: [] } }) {
-    const collection = super({ captureRejections: true })
-    collection.name = name
-    this.currentUser = currentUser
+const Controller = class Controller extends EventEmitter {
+  constructor({ name, getCurrentUser, controllers = {} }) {
+    const controller = super({ captureRejections: true })
+    Object.assign(controller, { name, getCurrentUser, controllers })
+  }
+
+  _getController(name) {
+    const { getCurrentUser, controllers } = this
+    return getController({ name, getCurrentUser, controllers })
   }
 
   _createRecord(record) {
@@ -14,18 +20,19 @@ const Controller = class Collection extends EventEmitter {
       ...record,
       id: UUID(),
       dateCreated: Date(),
-      ownerId: this.currentUser ? currentUser.id : undefined
+      ownerId: this.currentUser.id
     }
   }
 
-  _handlePermissions(opName) {
+  async _handlePermissions(opName) {
     const opScope = `${this.name}.${opName}`
-    if (!this.currentUser.scopes.includes(opScope))
+    const currentUser = await this.getCurrentUser()
+    if (!currentUser.scopes.includes(opScope))
       throw new AuthenticationError(`${opScope}: operation not authorized`)
   }
 
   async _publicMethod(methodName, ...methodArgs) {
-    this._handlePermissions(methodName)
+    await this._handlePermissions(methodName)
     this.emit(`before ${methodName}`, ...methodArgs)
     const methodRes = await this[`_${methodName}`](...methodArgs)
     this.emit(`after ${methodName}`, methodRes, ...methodArgs)

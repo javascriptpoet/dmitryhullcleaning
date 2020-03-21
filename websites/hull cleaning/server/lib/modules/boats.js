@@ -56,6 +56,6 @@ const typeDefs = gql`
 `
 const resolvers = {}
 
-class BoatsCollection extends Collection {}
-const collection = new BoatsCollection({ name: "Boats" })
-export default { typeDefs, resolvers, collection }
+class BoatsController extends Controller {}
+const Controller = new BoatsController({ name: "Boats" })
+export default { typeDefs, resolvers, Controller }

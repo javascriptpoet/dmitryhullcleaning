@@ -1,49 +1,93 @@
-const { ApolloServer } = require("apollo-server")
-import gql from "graphql-tag"
-import { TIMEOUT, resolveSoa } from "dns"
-const express = require("express")
-import authRouter from "../authRouter"
+const { ApolloServer, AuthenticationError } = require("apollo-server-express")
 
-import cookieParser from "cookie-parser"
-import bodyParser from "body-parser"
+const { makeExecutableSchema } = require("graphql-tools")
+const express = require("express")
+import passport from "passport"
 import R from "ramda"
-import flash from "connect-flash"
 import modules from "./modules"
 import config from "./config"
+import appTypeDefs from "./typeDefs"
+import getController from "./utils/getController"
+import cors from "cors"
 
 const main = async () => {
   await config()
+  const { typeDefs: moduleTypeDefs, resolvers } = modules
+  const typeDefs = [appTypeDefs, ...moduleTypeDefs]
 
-  const controllers = R.map(
-    controller => controller({ currentUser: req.user }),
-    modules.controllers
-  )
+  const context = ({ req, res }) => {
+    const getCurrentUser = () => {
+      return !req.currentUser
+        ? new Promise((resolve, reject) => {
+            passport.authenticate("jwt", (err, user) => {
+              if (err) reject(err)
+              if (!user)
+                reject(new AuthenticationError("user authentication failed"))
+              resolve(user)
+            })(req)
+          })
+            .then(user => {
+              req.currentUser = user
+              console.log("getCurrentUser", user)
+              return user
+            })
+            .catch(e => {
+              throw e
+            })
+        : req.currentUser
+    }
 
-  const app = express()
+    return {
+      req,
+      res,
+      getCurrentUser,
+      getController: name =>
+        getController({
+          name,
+          getCurrentUser,
+          controllers: modules.controllers
+        })
+    }
+  }
 
-  app.use(cookieParser())
-  app.use(bodyParser())
-  app.use(express.session({ cookie: { maxAge: 60000 } }))
-  app.use(flash())
-  app.use(passport.initialize())
-  app.use("/api", authRouter(passport))
-  app.post("/graphql", passport.authenticate(["jwt"], { session: false }))
+  const customErrorHandler = (err, req, res, next) => {
+    if (res.headersSent) {
+      return next(err)
+    }
+    res.json({
+      message: err.message
+    })
+    next()
+  }
 
-  new ApolloServer({
-    ...R.pick(["typeDefs", "resolvers"], modules),
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
     graphiql: true,
     pretty: true,
-    context: (req, res) => {
-      return {
-        user: req.user,
-        controllers
-      }
-    }
+    context,
+    formatError: e => console.log(e)
   })
-  server.applyMiddleware({ app, path: "/graphql" })
-  server
-    .listen()
-    .then(({ url }) => console.log(`Running a GraphQL API server at ${url}`))
+
+  const app = express()
+  app.use(cors())
+  app.use(express.json())
+  app.use(express.urlencoded({ extended: true }))
+  app.use(passport.initialize())
+
+  app.use(express.static(path.join(__dirname, "build")))
+  app.get("/", function(req, res) {
+    res.sendFile(path.join(__dirname, "build", "index.html"))
+  })
+  server.applyMiddleware({ app })
+
+  app.use(customErrorHandler)
+  app.listen(4000, () =>
+    console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
+  )
+  return 0
 }
 
-main()
+main().catch(e => {
+  console.log(e)
+})

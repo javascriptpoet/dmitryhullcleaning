@@ -1,11 +1,12 @@
 /** @jsx jsx */
 import { css, Global, jsx } from "@emotion/core"
-import useTheme from "../hooks/useTheme"
+import { ThemeContext } from "./AppProvider"
+import { useContext } from "react"
 
 export const jsxFix = jsx
 
 const GlobalStyles = () => {
-  const { font, colors } = useTheme()
+  const { font, colors } = useContext(ThemeContext)
 
   return (
     <Global

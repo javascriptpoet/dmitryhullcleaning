@@ -1,60 +1,76 @@
-function resolvePermissions(
+import getAuthToken from "../../utils/getAuthToken"
+import passport from "passport"
+import { ApolloError } from "apollo-server"
+
+async function resolvePermissions(
   _,
-  { allowedPermissions, disallowedPermissions },
-  { controllers: { permissionsController } }
+  { allowed, disallowed },
+  { getController }
 ) {
-  return permissionsController.resolvePermissions(
-    allowedPermissions,
-    disallowedPermissions
+  return await getController("permissions").resolvePermissions(
+    allowed,
+    disallowed
   )
 }
 
-function upsertRole(
-  _,
-  { name, permissions },
-  { controllers: { permissionsController } }
-) {
-  return permissionsController.upsertRole(name, permissions)
+async function upsertRole(_, { name, permissions }, { getController }) {
+  return await getController("users").upsertRole(name, permissions)
 }
 
-function upsertScopeSpace(
-  _,
-  { name, permissions },
-  { controllers: { permissionsController } }
-) {
-  return permissionsController.upsertScopeSpace(name, permissions)
+async function upsertScopeSpace(_, { name, permissions }, { getController }) {
+  return await getController("permissions").upsertScopeSpace(name, permissions)
 }
 
-function addScope(_, { name }, { controllers: { permissionsController } }) {
-  return permissionsController.addScope(name)
+async function addScope(_, { name }, { getController }) {
+  return await getController("permissions").addScope(name)
 }
 
-function deleteRole(_, { name }, { controllers: { permissionsController } }) {
-  return permissionsController.deleteRole(name)
+async function deleteRole(_, { name }, { getController }) {
+  return await getController("permissions").deleteRole(name)
 }
 
-function deleteScopeSpace(
-  _,
-  { name },
-  { controllers: { permissionsController } }
-) {
-  return permissionsController.deleteScopeSpace(name)
+async function deleteScopeSpace(_, { name }, { getController }) {
+  return await getController("permissions").deleteScopeSpace(name)
 }
 
-function deleteScope(_, { name }, { controllers: { permissionsController } }) {
-  return permissionsController.deleteScope(name)
+async function deleteScope(_, { name }, { getController }) {
+  return await getController("permissions").deleteScope(name)
+}
+
+async function login(_, { input }, { res, getController }) {
+  console.log("login resolver")
+  const onLogin = currentUser => {
+    console.log("onLogin", currentUser)
+    res.cookie("jwt", `${getAuthToken(currentUser.id)}`, {
+      maxAge: 24 * 60 * 60,
+      httpOnly: true
+    })
+  }
+  await getController("permissions").login(input, onLogin)
+}
+
+async function signup(_, { input }, { getController }) {
+  await getController("permissions").signup(input)
+}
+
+async function logout(_, __, { res }) {
+  const onLogout = () => res.clearCookie("jwt")
+  await getController("permissions").logout(onLogout)
 }
 
 export default {
-  mutation: {
+  Mutation: {
     upsertRole,
     upsertScopeSpace,
     addScope,
     deleteRole,
     deleteScopeSpace,
-    deleteScope
+    deleteScope,
+    login,
+    logout,
+    signup
   },
-  query: {
+  Query: {
     resolvePermissions
   }
 }

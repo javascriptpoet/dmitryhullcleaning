@@ -1,63 +1,44 @@
 import gql from "graphql-tag"
 
+const UserProfileFields = `
+  fullname: String
+  username: String
+  email: String
+  phone: String
+  commMethod: CommMethod
+  allowed: [String]
+  disallowed: [String]
+  scopes:[String]
+`
 const typeDefs = gql`
-  interface UserProfile {
-    fullName: String
-    username: String
-    email: String
-    phone: String
-    commMethod: CommMethod
-    allowed: [String]
-    disallowed: [String]
+  enum CommMethod {
+    EMAIL
+    VOICE
+    TEXT
   }
 
-  type UserProfile implements UserProfile {
-    fullName: String
-    username: String
-    email: String
-    phone: String
-    commMethod: CommMethod
-    allowed: [String]
-    disallowed: [String]
+  type UserProfile {
+   ${UserProfileFields}
   }
 
-  type User implements UserProfile {
+  type User {
     id: ID
     ownerId: ID
     password: String
     createDate: String
     comments: [Comment]
-    fullName: String
-    username: String
-    email: String
-    phone: String
-    commMethod: CommMethod
-    allowed: [String]
-    disallowed: [String]
+    ${UserProfileFields}
   }
 
-  type CurrentUser implements UserProfile {
+  type CurrentUser {
     createDate: String
     comments: [Comment]
-    fullname: String
-    username: String
-    email: String
-    phone: String
-    commMethod: CommMethod
-    allowed: [String]
-    disallowed: [String]
-    scopes:[String]
+    ${UserProfileFields}
   }
 
   input AddUser {
     password: String
-    fullName: String
-    username: String
-    email: String
-    phone: String
-    commMethod: String
-    allowed: [String]
-    disallowed: [String]
+    ${UserProfileFields}
   }
 
   extend type Mutation {
@@ -72,4 +53,4 @@ const typeDefs = gql`
   }
 `
 
-export default [typeDefs]
+export default typeDefs

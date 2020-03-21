@@ -2,11 +2,10 @@
 import { css, jsx } from "@emotion/core"
 import { Link } from "@reach/router"
 import { Fragment } from "react"
-import useTheme from "../../../hooks/useTheme"
 import MenuLink from "./MenuLink"
 import SubMenu from "./SubMenu"
 import React, { useState, useContext } from "react"
-
+import { ThemeContext } from "../../AppProvider"
 export const jsxFix = jsx
 
 const MenuContext = React.createContext()
@@ -19,7 +18,7 @@ const Menu = ({
   isVertical = false,
   customCss = css``
 }) => {
-  const { colors } = useTheme()
+  const { colors } = useContext(ThemeContext)
   const [isCurrent, setIsCurrent] = useState(false)
   const childrenStatus = {}
 

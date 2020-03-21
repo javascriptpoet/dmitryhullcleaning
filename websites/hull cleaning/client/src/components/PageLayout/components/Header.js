@@ -1,9 +1,10 @@
 /** @jsx jsx */
+import { useContext } from "react"
 import { css, jsx } from "@emotion/core"
 import { Link } from "@reach/router"
 import LayoutContainer from "../../LayoutContainer"
 import useScreenSize from "../../../hooks/useScreenSize"
-import useTheme from "../../../hooks/useTheme"
+import { ThemeContext } from "../../../components/AppProvider"
 import mainMenu from "../mainMenu"
 import Logo from "./Logo"
 import Menu from "./Menu"
@@ -11,12 +12,12 @@ import logo from "../../../assets/croppedshoe.png"
 import { Navbar, Button, Form } from "react-bulma-components"
 import { Fragment } from "react"
 import routes from "../../../routes"
-import useCurrentUser from "../../../hooks/useCurrentUser"
+import { CurrentUserContext } from "../../AppProvider"
 
 export const jsxFix = jsx
 
 const MenuFromArray = ({ arr: menu }) => {
-  const { isAllowed } = useCurrentUser()
+  const { isAllowed } = useContext(CurrentUserContext)
   const createMenu = menu => {
     return menu.map(({ label, path, scopes: routeScopes = [], subMenu }) => {
       const element = (
@@ -40,7 +41,7 @@ const MenuFromArray = ({ arr: menu }) => {
 }
 
 const AccountLnks = () => {
-  const { isLoggedin, logout } = useCurrentUser()
+  const { isLoggedIn, logout } = useContext(CurrentUserContext)
   const whenLoggedout = (
     <div className="field has-addons navbar-item">
       <p className="control ">
@@ -68,11 +69,11 @@ const AccountLnks = () => {
       </Button>
     </Navbar.Item>
   )
-  return isLoggedin ? whenLoggedin : whenLoggedout
+  return isLoggedIn() ? whenLoggedin : whenLoggedout
 }
 
 const Header = () => {
-  const theme = useTheme()
+  const theme = useContext(ThemeContext)
   return (
     <Navbar
       css={css`

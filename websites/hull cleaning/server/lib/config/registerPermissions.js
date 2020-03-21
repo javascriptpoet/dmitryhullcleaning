@@ -3,56 +3,17 @@ import modules from "../modules"
 
 const permissionsController = modules.controllers.permissions()
 
-const namespacedPermission = (permission, moduleName) =>
-  `${moduleName}.${permission}`
-
-const namespacedPermissions = (permissions, moduleName) =>
-  permissions.map(namespacePermission)
-
-const namespacedScopeSpace = (name, permissions, moduleName) => ({
-  [`${namespacedPermission(name, moduleName)}`]: namespacedPermissions(
-    permissions,
-    moduleName
-  )
-})
-
-const namespacedScopeSpaces = (scopeSpaces, moduleName) =>
-  R.reduce(
-    (acc, name, permissions) => ({
-      ...acc,
-      ...namespacedScopeSpace(name, permissions, moduleName)
-    }),
-    {},
-    scopeSpaces
-  )
-
 const registerAllModulePermissions = async () => {
-  const registerModulePermissions = async (moduleName, module) => {
-    const namespacedScopes = namespacedPermissions(
-      module.permissions.scopes,
-      moduleName
-    )
-    await permissionsController._registerBuiltInScopes(namespacedScopes)
-
-    const namespacedScopeSpaces = namespacedScopeSpaces(
-      module.permissions.scopeSpaces,
-      moduleName
-    )
-    await permissionsController._registerBuiltInScopeSpaces(
-      namespacedScopeSpaces
-    )
-  }
-  const promisesToRegisterModules = Object.entries(modules).map(
-    registerModulePermissions
-  )
-  await Promise.all(promisesToRegisterModules)
+  const {
+    permissions: { scopes, scopeSpaces }
+  } = modules
+  await permissionsController._registerBuiltInScopes(scopes)
+  await permissionsController._registerBuiltInScopeSpaces(scopeSpaces)
 }
 
 const registerBuiltInPermissions = async () => {
   const makeScopeSpacePermissions = scopeSpaceName =>
-    Object.entries(modules).map(moduleName =>
-      namespacedPermission(scopeSpaceName, moduleName)
-    )
+    Object.entries(modules).map(moduleName => `${moduleName}.${scopeSpaceName}`)
 
   await permissionsController._registerBuiltInScopeSpaces({
     read: makeScopeSpacePermissions("read"),
@@ -60,7 +21,8 @@ const registerBuiltInPermissions = async () => {
   })
 
   await permissionsController._registerBuiltInRoles({
-    admin: ["all"]
+    admin: ["all"],
+    guest: ["permissions.login", "permissions.signup"]
   })
 }
 

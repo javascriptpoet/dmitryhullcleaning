@@ -1,17 +1,15 @@
-import React from "react"
+import React, { useContext } from "react"
 import { Link } from "@reach/router"
 import routes from "../routes"
-import useCurrentUser from "../hooks/useCurrentUser"
+import { CurrentUserContext } from "./AppProvider"
 import LazyRoute from "./LazyRoute"
+import { AuthorizationError } from "../utils/Errors"
 
 export default ({ route }) => {
-  const { isAllowed } = useCurrentUser()
+  const { isAllowed } = useContext(CurrentUserContext)
   const { scopes = [], component } = route
 
-  if (!isAllowed(scopes)) {
-    alert("access denied for lack of permissions")
-    return null
-  }
+  if (!isAllowed(scopes)) throw new AuthorizationError("Authorization error")
 
   return <LazyRoute component={component} />
 }

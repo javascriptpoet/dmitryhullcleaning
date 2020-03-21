@@ -1,28 +1,38 @@
 import Controller from "../../utils/Controller"
 import { ApolloError } from "apollo-server"
 import permissionsController from "../permissions/controller"
+import R from "ramda"
 
-const users = []
+let users = []
 
-class UsersController extends Collection {
+class UsersController extends Controller {
   constructor(props) {
     super({ name: "users", ...props })
   }
 
   async _findUser(filter, errMessage) {
+    console.log("findUser", users)
     const user = users.find(filter)
-    if (user) {
-      const scopes = await permissionsController()._findUserScopes(user)
-      return { ...user, scopes }
-    }
-    throw new ApolloError(errMessage)
+    if (!user) throw new ApolloError(errMessage)
+    const permissionsController = this._getController("permissions")
+    user.scopes = permissionsController._resolvePermissions(
+      user.allowed,
+      user.disallowed
+    )
+    return user
   }
 
-  async _findByUsername(username) {
-    const user = await this._findUser(
-      ({ username }) => username === usernameToFind,
-      `Username ${username} not found`
-    )
+  async _findByUsername(usernameToFind) {
+    console.log(users)
+    const user = await this._findUser(({ username }) => {
+      console.log(
+        "findByUsername",
+        username,
+        usernameToFind,
+        usernameToFind === username
+      )
+      return username === usernameToFind
+    }, `Username ${usernameToFind} not found`)
     return user
   }
 
@@ -34,7 +44,7 @@ class UsersController extends Collection {
   async _findById(idToFind) {
     const user = await this._findUser(
       ({ id }) => id === idToFind,
-      `Username ${username} not found`
+      `Username ${idToFind} not found`
     )
     return user
   }
@@ -45,15 +55,15 @@ class UsersController extends Collection {
   }
 
   async _add(user) {
+    const { username } = user
     try {
-      await this._findByUsername(user.username)
+      await this._findByUsername(username)
     } catch (e) {
       const newUser = this._createRecord(user)
-      this.users.push(newUser)
+      users.push(newUser)
       return newUser
-    } finally {
-      throw new ApolloError(`user ${username} already exists`)
     }
+    throw new ApolloError(`user ${username} already exists`)
   }
 
   async add(user) {
@@ -93,6 +103,14 @@ class UsersController extends Collection {
   async addComment(id, message) {
     const comment = this._publicMethod("addComment", id, message)
     return comment
+  }
+
+  async _currentUser() {
+    return await this.getCurrentUser()
+  }
+
+  async currentUser(...args) {
+    return this._publicMethod("currentUser", ...args)
   }
 }
 export default props => new UsersController(props)

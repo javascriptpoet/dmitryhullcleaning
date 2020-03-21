@@ -1,14 +1,14 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core"
 import { Link } from "@reach/router"
-import useTheme from "../../../hooks/useTheme"
 import Menu, { useMenu } from "./Menu"
-import React, { useState, useCallback, useEffect } from "react"
+import React, { useState, useCallback, useEffect, useContext } from "react"
+import { ThemeContext } from "../../AppProvider"
 
 export const jsxFix = jsx
 
 const SubMenu = ({ children, label, menu, customCss = css`` }) => {
-  const { colors } = useTheme()
+  const { colors } = useContext(ThemeContext)
   const [isCurrent, setIsCurrent] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const parentMenuContext = useMenu()

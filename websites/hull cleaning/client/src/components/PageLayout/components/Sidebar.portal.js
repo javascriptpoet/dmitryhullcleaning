@@ -1,14 +1,14 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core"
-import useTheme from "../../../hooks/useTheme"
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useContext } from "react"
 import useScreenSize from "../../../hooks/useScreenSize"
+import { ThemeContext } from "../../AppProvider"
 
 export const jsxFix = jsx
 
 const sidebarRoot = document.getElementById("sidebar")
 const Sidebar = ({ customCss, children }) => {
-  const { font, utils } = useTheme()
+  const { font, utils } = useContext(ThemeContext)
   const screenSize = useScreenSize()
   const [isOpen, setIsOpen] = useState(true)
 

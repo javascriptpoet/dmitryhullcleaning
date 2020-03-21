@@ -1,10 +1,10 @@
 import Controller from "../../utils/Controller"
-import { ApolloError } from "apollo-server"
+import { ApolloError, UserInputError } from "apollo-server"
 import R from "ramda"
 
-const roles = {}
-const scopeSpaces = {}
-const scopes = []
+let roles = {}
+let scopeSpaces = {}
+let scopes = []
 
 class PermissionsController extends Controller {
   constructor(props) {
@@ -26,7 +26,9 @@ class PermissionsController extends Controller {
       }
       return [...acc, el]
     }
-    const resolved = await Promise.all(R.reduce(addScopes, [], list))
+    const resolved = (list || []).reduce(async (acc, el) => {
+      return await addScopes(acc, el)
+    }, [])
     return R.uniq(resolved)
   }
 
@@ -37,10 +39,7 @@ class PermissionsController extends Controller {
     const resolvedDisallowed = await this._resolvePermissionList(
       disallowedPermissions
     )
-    return R.compose(R.uniq, R.difference)(
-      R.union(scopesFromRoles(), resolvedAllowed),
-      resolvedDisallowed
-    )
+    return R.compose(R.uniq, R.difference)(resolvedAllowed, resolvedDisallowed)
   }
 
   resolvePermissions(...args) {
@@ -59,7 +58,7 @@ class PermissionsController extends Controller {
     return this._publicMethod("resolvePermissionTypes", ...args)
   }
 
-  async _permissionType(name) {
+  _permissionType(name) {
     if (roles[name]) return "role"
     if (scopeSpaces[name]) return "scopeSpace"
     if (R.includes(name, scopes)) return "scope"
@@ -69,7 +68,7 @@ class PermissionsController extends Controller {
   async _upsertRole(name, permissionsToUpsert) {
     const oldPermissions = roles[name] || []
     const type = await this._permissionType(name)
-    if (type !== "role")
+    if (!!type && type !== "role")
       throw new ApolloError(
         `Permissions must be unique. ${name} is already a ${type}`
       )
@@ -84,7 +83,7 @@ class PermissionsController extends Controller {
   async _upsertScopeSpace(name, permissionsToUpsert) {
     const oldPermissions = scopeSpaces[name] || []
     const type = await this._permissionType(name)
-    if (type !== "scopeSpace")
+    if (!!type && type !== "scopeSpace")
       throw ApolloError(
         `Permissions must be unique. ${name} is already a ${type}`
       )
@@ -100,15 +99,16 @@ class PermissionsController extends Controller {
   }
 
   async _addScope(scope) {
-    const type = await this._permissionType(name)
-    if (type !== "scope")
-      throw ApolloError(
-        `Permissions must be unique. ${name} is already a ${type}`
+    const type = await this._permissionType(scope)
+    if (!!type && type !== "scope") {
+      throw new ApolloError(
+        `Permissions must be unique. ${scope} is already a ${type}`
       )
-    scopes = R.uniq([...scopes, name])
+    }
+    scopes = R.uniq([...scopes, scope])
   }
 
-  async _deleteRole(name) {
+  _deleteRole(name) {
     if (roles[name]) delete roles[name]
   }
 
@@ -116,7 +116,7 @@ class PermissionsController extends Controller {
     return this._publicMethod("deleteRole", ...args)
   }
 
-  async _deleteScopeSpace(name) {
+  _deleteScopeSpace(name) {
     if (scopeSpaces[name]) delete scopeSpaces[name]
   }
 
@@ -126,22 +126,72 @@ class PermissionsController extends Controller {
 
   async _registerBuiltInRoles(roles) {
     //a public method would have to check all roles first so its none or all
-    const promissesToRegister = Object.entries(roles).map(this._upsertRole)
-    await Promise.all(promissesToRegister)
+    Object.entries(roles).forEach(async role => {
+      await this._upsertRole
+    })
   }
 
   async _registerBuiltInScopeSpaces(scopeSpaces) {
     //a public method would have to check all roles first so its none or all
-    const promissesToRegister = Object.entries(scopeSpace).map(
-      this._upsertScopeSpace
-    )
-    await Promise.all(promissesToRegister)
+    Object.entries(scopeSpaces).forEach(async scopeSpace => {
+      await this._upsertScopeSpace
+    })
   }
 
   async _registerBuiltInScopes(scopes) {
     //a public method would have to check all roles first so its none or all
-    const promissesToRegister = scopes.map(this._addScope)
-    await Promise.all(promissesToRegister)
+    scopes.forEach(async scope => {
+      return await this._addScope(scope)
+    })
+  }
+
+  async _signup(newUser) {
+    const usersController = this._getController("users")
+    try {
+      await usersController._add(newUser)
+    } catch (e) {
+      if (e instanceof ApolloError)
+        throw new UserInputError("signup error", {
+          fieldErrors: [{ name: "username", message: e.message }]
+        })
+      throw e
+    }
+  }
+
+  signup(...args) {
+    return this._publicMethod("signup", ...args)
+  }
+
+  _logout(onLogout) {
+    onLogout()
+  }
+
+  logout(...args) {
+    return this._publicMethod("logout", ...args)
+  }
+
+  async _login({ username, password }, onLogin) {
+    const usersController = this._getController("users")
+    let user
+    try {
+      user = await usersController._findByUsername(username)
+    } catch (e) {
+      console.log(e)
+      if (e instanceof ApolloError)
+        throw new UserInputError("login error", {
+          fieldErrors: [{ name: "username", message: e.message }]
+        })
+      throw e
+    }
+    if (user.password !== password)
+      throw new UserInputError("login error", {
+        fieldErrors: [{ name: "password", message: "does not match" }]
+      })
+    onLogin(user)
+  }
+
+  login(...args) {
+    return this._publicMethod("login", ...args)
   }
 }
 

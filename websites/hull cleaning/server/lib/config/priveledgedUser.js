@@ -8,10 +8,14 @@ const addPriveledgedUser = async () => {
     }
   } = config
   const {
-    users: { controller: usersController }
+    controllers: { users: usersController }
   } = modules
-
-  await usersController().add({ username, password, roles: ["admin"] })
+  const adminUser = await usersController()._add({
+    username,
+    password,
+    roles: ["admin"]
+  })
+  console.log("addPrivyUser", adminUser)
 }
 
 export default addPriveledgedUser
